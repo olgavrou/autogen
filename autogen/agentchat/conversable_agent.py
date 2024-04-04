@@ -1279,6 +1279,8 @@ class ConversableAgent(LLMAgent):
 
     def _generate_oai_reply_from_client(self, llm_client, messages, cache) -> Union[str, Dict, None]:
         # unroll tool_responses
+        context = messages[-1].pop("context", None)
+        # unroll tool_responses
         all_messages = []
         for message in messages:
             tool_responses = message.get("tool_responses", [])
@@ -1288,11 +1290,12 @@ class ConversableAgent(LLMAgent):
                 if message.get("role") != "tool":
                     all_messages.append({key: message[key] for key in message if key != "tool_responses"})
             else:
-                all_messages.append(message)
+                if message:
+                    all_messages.append(message)
 
         # TODO: #1143 handle token limit exceeded error
         response = llm_client.create(
-            context=messages[-1].pop("context", None),
+            context=context,
             messages=all_messages,
             cache=cache,
         )

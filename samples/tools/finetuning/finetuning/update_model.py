@@ -1,8 +1,7 @@
-from autogen import ConversableAgent, Agent, OpenAIWrapper, ModelClient
 from typing import Any, Dict, List, Protocol
 
 
-class UpdateableModelClient(ModelClient, Protocol):
+class UpdateableModelClient(Protocol):
     def update_model(
         self, preference_data: List[Dict[str, Any]], inference_messages: List[Dict[str, Any]], **kwargs: Any
     ) -> Dict[str, Any]:
@@ -22,11 +21,11 @@ class UpdateableModelClient(ModelClient, Protocol):
 
 
 def _client_wrapper_update_model(
-    oai_wrapper_client: OpenAIWrapper,
-    preference_data: List[Any],
-    inference_messages: List[Dict[str, Any]],
-    **kwargs: Any,
-) -> Dict[str, Any]:
+    oai_wrapper_client,
+    preference_data,
+    inference_messages,
+    **kwargs,
+):
     """Learn from the preference data.
 
     update_model is not supported for multiple model clients as it would be ambiguous which client was responsible for the inference messages.
@@ -57,8 +56,8 @@ def _client_wrapper_update_model(
 
 
 def update_model(
-    update_agent: ConversableAgent, preference_data: List[Dict[str, Any]], other_agent: Agent, **kwargs
-) -> Dict[str, Any]:
+    update_agent, preference_data, other_agent, **kwargs
+):
     """Update the model using the preference data and the conversation history.
 
     Args:
